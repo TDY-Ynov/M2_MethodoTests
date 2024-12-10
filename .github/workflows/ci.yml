@@ -1,5 +1,9 @@
 name: CI - Book management
 
+permissions:
+  checks: write
+  pull-requests: write
+
 on:
   push:
     branches:
