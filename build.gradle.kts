@@ -3,6 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.3.6"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("jacoco")
 }
 
 group = "com.example"
@@ -25,15 +26,28 @@ dependencies {
 	testImplementation("io.kotest:kotest-assertions-core:5.9.1")
 	testImplementation("io.kotest:kotest-property:5.9.1")
 	testImplementation("io.mockk:mockk:1.13.13")
-
-}
-
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+
+	jvmArgs = listOf(
+		"--add-opens=java.base/sun.util.resources.cldr.provider=ALL-UNNAMED",
+		"--add-opens=java.base/java.util=ALL-UNNAMED"
+	)
+
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+
+	doLast {
+		val excludes = listOf("sun/.*", "java/.*")
+	}
 }
