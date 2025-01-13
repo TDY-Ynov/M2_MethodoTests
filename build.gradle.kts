@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.3.6"
 	id("io.spring.dependency-management") version "1.1.6"
 	id("jacoco")
+	id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "com.example"
@@ -51,3 +52,15 @@ tasks.jacocoTestReport {
 		val excludes = listOf("sun/.*", "java/.*")
 	}
 }
+
+pitest {
+	targetClasses.set(listOf("books_tp.domain.usecase.*"))
+	targetTests.set(listOf("books_tp.domain.usecase.*Test"))
+	junit5PluginVersion.set("1.1.0")
+	testPlugin.set("junit5")
+
+	mutationThreshold.set(75)
+
+	reportDir.set(file("$buildDir/reports/pitest"))
+}
+
